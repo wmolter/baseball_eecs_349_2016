@@ -1,7 +1,8 @@
 import requests
+import sys
 
-urls = open('urls.txt')
-workingUrls = open('cleanURLs.txt', 'w')
+urls = open(sys.argv[1])
+workingUrls = open('clean' + sys.argv[1], 'w')
 count = 1
 index = 0
 
