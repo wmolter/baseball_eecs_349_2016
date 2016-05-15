@@ -7,8 +7,9 @@ def generateURL():
 	stringEnd = '0.shtml\n'
 	teams = ['ARI', 'ATL', 'BAL', 'BOS', 'CHN', 'CHA', 'CIN', 'CLE', 'COL', 'DET', 'HOU', 'KCA', 'ANA', 'LAN', 'MIA', 'MIL', 'MIN', 'NYN', 'NYA', 'OAK', 'PHI', 'PIT', 'SDN', 'SEA', 'SFN', 'SLN', 'TBA', 'TEX', 'TOR', 'WAS']
 	years = []
-	recentYear = 2015
-	oldestYear = 1980
+	recentYear = 1975
+	oldestYear = 1971
+
 	for year in range(recentYear, oldestYear-1, -1):
 		years.append(str(year))
 	months = []
@@ -22,7 +23,7 @@ def generateURL():
 		else: 
 			days.append(str(day))
 
-	urls = open('urls.txt','w')
+	urls = open('1975-1971urls.txt','w')
 
 	for team in teams:
 		for year in years:
