@@ -3,17 +3,20 @@ from bs4 import BeautifulSoup
 import requests
 
 def main():
-    parsed_box = parse_one_box("http://www.baseball-reference.com/boxes/OAK/OAK200408250.shtml")
+
+    url = "http://www.baseball-reference.com/boxes/OAK/OAK200408250.shtml"
+    r = requests.get(url)
+    cont = r.content
+    soup = BeautifulSoup(cont, "html.parser")
+    parsed_box = parse_one_box()
     cleaned_box = clean_box_for_tree(parsed_box)
     print(cleaned_box)
 
 
 
 
-def parse_one_box(url):
-    r = requests.get(url)
-    cont = r.content
-    soup = BeautifulSoup(cont, "html.parser")
+def parse_one_box(html):
+    soup = BeautifulSoup(html, "html.parser")
 
     content = soup.find(id='page_content')
     score = content.find_all(class_="xxx_large_text bold_text", limit=2)
