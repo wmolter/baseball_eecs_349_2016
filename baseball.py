@@ -7,8 +7,7 @@ def main():
     url = "http://www.baseball-reference.com/boxes/OAK/OAK200408250.shtml"
     r = requests.get(url)
     cont = r.content
-    soup = BeautifulSoup(cont, "html.parser")
-    parsed_box = parse_one_box()
+    parsed_box = parse_one_box(cont)
     cleaned_box = clean_box_for_tree(parsed_box)
     print(cleaned_box)
 
