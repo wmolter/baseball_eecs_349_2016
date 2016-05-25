@@ -1,15 +1,53 @@
 
 from bs4 import BeautifulSoup
 import requests
+import os.path
+import sys
 
+
+# Command line arguments: output file name, folder of files, start index of files, optional end index of files
 def main():
 
-    url = "http://www.baseball-reference.com/boxes/OAK/OAK200408250.shtml"
-    r = requests.get(url)
-    cont = r.content
-    parsed_box = parse_one_box(cont)
-    cleaned_box = clean_box_for_tree(parsed_box)
-    print(cleaned_box)
+    out_filename = sys.argv[1]
+
+    output = open(out_filename, 'w')
+    output.write("@relation training\n")
+    metadata = get_attrib_metadata()
+    for attrib in metadata:
+        output.write("@attribute " + attrib["name"])
+        if attrib["is_nominal"]:
+            output.write(" {")
+            output.write(",".join(str(x) for x in attrib["is_nominal"]))
+            output.write("}")
+        else:
+            output.write(" numeric")
+        output.write("\n")
+
+    folder = sys.argv[2]
+    startIndex = int(sys.argv[3])
+    endIndex = -1
+    try:
+        endIndex = int(sys.argv[4])
+    except Exception:
+        pass
+
+    output.write("\n@data\n")
+    index = startIndex
+    pathname = folder + "/HTML File_" + str(index) + ".html"
+    while index <= endIndex or endIndex == -1 and os.path.exists(pathname):
+        if index % 100 == 0:
+            print "Processing " + str(index) + "files."
+        if os.path.exists(pathname):
+            this_file = open(pathname)
+            cont = this_file.read()
+            parsed_box = parse_one_box(cont)
+            cleaned_box = clean_box_for_tree(parsed_box)
+            csv = ','.join(str(x) for x in cleaned_box)
+            output.write(csv + "\n")
+            this_file.close()
+        index += 1
+        pathname = folder + "/HTML File_" + str(index) + ".html"
+    output.close()
 
 
 
@@ -40,9 +78,6 @@ def parse_one_box(html):
             this_table.append(data_numbers)
         all_data.append(this_table)
 
-    # print "The winner is " + str(winner)
-    # for row in all_data:
-    #     print list(row)
     return {"winner":winner, "home_batting": all_data[0], "away_batting": all_data[1],
             "home_pitching": all_data[2], "away_pitching": all_data[3]}
 
@@ -56,7 +91,7 @@ def clean_box_for_tree(box_dict):
     away_avgs = average_columns(a_bat, 7, 11)
     h_era = [box_dict["home_pitching"][0][7]]
     a_era = [box_dict["away_pitching"][0][7]]
-    this_row = winner + home_avgs + h_era + away_avgs + a_era
+    this_row =home_avgs + h_era + away_avgs + a_era + winner
     return this_row
 
 def average_columns(table, start_index, end_index):
@@ -68,7 +103,7 @@ def average_columns(table, start_index, end_index):
     return avgs
 
 def get_attrib_metadata():
-    attribs = ["winner", "home_avg", "home_obp", "home_slg", "home_ops", "home_era", "away_avg", "away_obp", "away_slg", "away_ops", "away_era"]
+    attribs = ["home_avg", "home_obp", "home_slg", "home_ops", "home_era", "away_avg", "away_obp", "away_slg", "away_ops", "away_era","winner"]
     i = 0
     metadata = []
     for attrib in attribs:
@@ -76,7 +111,7 @@ def get_attrib_metadata():
         metadata[i]["name"] = attrib
         metadata[i]["is_nominal"] = False
         i += 1
-    metadata[0]["is_nominal"] = True
+    metadata[i-1]["is_nominal"] = [True, False]
     return metadata
 
 
