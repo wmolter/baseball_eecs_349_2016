@@ -51,7 +51,9 @@ def main():
 
 
 
-
+#  Takes in a box score html file and returns a dictionary with the winner and 4 tables: home_batting, away_batting,
+#  home_pitching, and away_pitching, which contain the full contents of the tables in the html file except for the
+#  name.
 def parse_one_box(html):
     soup = BeautifulSoup(html, "html.parser")
 
@@ -72,7 +74,7 @@ def parse_one_box(html):
             data_numbers = []
             for entry in data_strings:
                 if entry is None:
-                    data_numbers.append(None)
+                    data_numbers.append("?")
                 else:
                     data_numbers.append(float(entry))
             this_table.append(data_numbers)
@@ -82,6 +84,10 @@ def parse_one_box(html):
             "home_pitching": all_data[2], "away_pitching": all_data[3]}
 
 
+#  This function takes in the output from parse_one_box and returns a list of attribute values for that box score:
+#  ["home_avg", "home_obp", "home_slg", "home_ops", "home_era", "away_avg", "away_obp", "away_slg", "away_ops", "away_era","winner"]
+#  in that order.  The batting stats are the average of each team's stats over the players; the pitching stats are just
+#  for the starting pitcher.
 def clean_box_for_tree(box_dict):
     winner = [box_dict["winner"]]
     h_bat = box_dict["home_batting"]
@@ -94,6 +100,8 @@ def clean_box_for_tree(box_dict):
     this_row =home_avgs + h_era + away_avgs + a_era + winner
     return this_row
 
+#  This averages the columns of table from start_index to end_index into a list of end_index-start_index values (the
+#  average of those columns).
 def average_columns(table, start_index, end_index):
     avgs = []
     for index in range(start_index, end_index):
@@ -102,6 +110,8 @@ def average_columns(table, start_index, end_index):
         avgs.append(avg)
     return avgs
 
+
+# This functions a list of attribute dictionaries, with "name" and "is_nominal" mapped to their respective values.
 def get_attrib_metadata():
     attribs = ["home_avg", "home_obp", "home_slg", "home_ops", "home_era", "away_avg", "away_obp", "away_slg", "away_ops", "away_era","winner"]
     i = 0
