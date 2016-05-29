@@ -60,6 +60,12 @@ def parse_one_box(html):
     content = soup.find(id='page_content')
     score = content.find_all(class_="xxx_large_text bold_text", limit=2)
     winner = int(score[0].string) > int(score[1].string)
+    line_score = content.find(id="linescore")
+    link_lines = line_score.find_all("a")
+    away_team_link = link_lines[0].get('href')
+    home_team_link = link_lines[1].get('href')
+
+
 
     tables = content.find_all(class_="sortable stats_table", limit=4)
 
@@ -80,8 +86,9 @@ def parse_one_box(html):
             this_table.append(data_numbers)
         all_data.append(this_table)
 
-    return {"winner":winner, "home_batting": all_data[0], "away_batting": all_data[1],
+    return {"winner":winner, "home_team": home_team_link, "away_team": away_team_link, "home_batting": all_data[0], "away_batting": all_data[1],
             "home_pitching": all_data[2], "away_pitching": all_data[3]}
+
 
 
 #  This function takes in the output from parse_one_box and returns a list of attribute values for that box score:
@@ -103,7 +110,7 @@ def parse_one_box(html):
 #function takes in the output from parse_one_box and returns a dictionary to be handed to json.dumps() in the 
 #format {winner: , hb1-9: , ab1-9: , hp: , ap: }
 def make_dump(box_dict):
-    new_dict = {'winner': box_dict['winner']}
+    new_dict = {'winner': box_dict['winner'], 'home_team': box_dict['home_team'], 'away_team': box_dict['away_team']}
     for i in range(0, 9):
         new_dict[('hb'+str(i))] = {'BA':box_dict['home_batting'][i][7], 'OBP':box_dict['home_batting'][i][8], 'SLG':box_dict['home_batting'][i][9], 'OPS':box_dict['home_batting'][i][10]}
         new_dict[('ab'+str(i))] = {'BA':box_dict['away_batting'][i][7], 'OBP':box_dict['away_batting'][i][8], 'SLG':box_dict['away_batting'][i][9], 'OPS':box_dict['away_batting'][i][10]}
