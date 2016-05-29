@@ -60,6 +60,12 @@ def parse_one_box(html):
     content = soup.find(id='page_content')
     score = content.find_all(class_="xxx_large_text bold_text", limit=2)
     winner = int(score[0].string) > int(score[1].string)
+    line_score = content.find(id="linescore")
+    link_lines = line_score.find_all("a")
+    away_team_link = link_lines[0].get('href')
+    home_team_link = link_lines[1].get('href')
+
+
 
     tables = content.find_all(class_="sortable stats_table", limit=4)
 
@@ -80,7 +86,7 @@ def parse_one_box(html):
             this_table.append(data_numbers)
         all_data.append(this_table)
 
-    return {"winner":winner, "home_batting": all_data[0], "away_batting": all_data[1],
+    return {"winner":winner, "home_team": home_team_link, "away_team": away_team_link, "home_batting": all_data[0], "away_batting": all_data[1],
             "home_pitching": all_data[2], "away_pitching": all_data[3]}
 
 
