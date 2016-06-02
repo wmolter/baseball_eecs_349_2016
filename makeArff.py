@@ -14,13 +14,14 @@ def main():
     lineDict = json.loads(entry)
     for key in lineDict.keys():
         if key == 'away_team' or key == 'home_team':
-            pass
-        elif key[1] == 'b':
+            continue
+        elif key[1] == 'b':# and int(key[2]) < 5:
             for key1 in lineDict[key].keys():
-                output.write("@attribute " + key + '_' + key1 + ' numeric\n')
+                if key1 == 'OBP' or key1 == 'BA':
+                    output.write("@attribute " + key + '_' + key1 + ' numeric\n')
         elif key == 'winner':
             output.write("@attribute " + key + ' {True, False}\n')
-        else:
+        elif key[-1] =='p':
             output.write('@attribute ' + key + " numeric\n")
         #output.write("\n")
 
@@ -36,17 +37,18 @@ def main():
 
     while entry != '' and (index <= endIndex or endIndex == -1):
         lineDict = json.loads(entry)
-        if index % 100 == 0:
+        if index % 5000 == 0:
             print 'Processing ' + str(index) + ' lines.'
         if index >= startIndex:
             line = ''
             for key in lineDict.keys():
                 if key == 'away_team' or key == 'home_team':
-                    pass
-                elif key[1] == 'b':
+                    continue
+                elif key[1] == 'b':# and int(key[2]) < 5:
                     for key1 in lineDict[key].keys():
-                        line += str(lineDict[key][key1])+','
-                else:
+                        if key1 == 'OBP' or key1 == 'BA':
+                            line += str(lineDict[key][key1])+','
+                elif key[-1] == 'p':
                     line += str(lineDict[key])+','
             line = line[:-1]
             output.write(line +'\n')
