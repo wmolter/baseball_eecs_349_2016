@@ -57,4 +57,7 @@ def main():
         index += 1
     output.close()
 
-main()
+
+
+if __name__ == '__main__':
+    main()
