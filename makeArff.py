@@ -17,11 +17,12 @@ def main():
             continue
         elif key[1] == 'b':# and int(key[2]) < 5:
             for key1 in lineDict[key].keys():
-                if key1 == 'OBP' or key1 == 'BA':
-                    output.write("@attribute " + key + '_' + key1 + ' numeric\n')
+                #if key1 == 'SLG':# or key1 == 'OBP':
+                output.write("@attribute " + key + '_' + key1 + ' numeric\n')
         elif key == 'winner':
             output.write("@attribute " + key + ' {True, False}\n')
         elif key[-1] =='p':
+            #continue
             output.write('@attribute ' + key + " numeric\n")
         #output.write("\n")
 
@@ -46,9 +47,9 @@ def main():
                     continue
                 elif key[1] == 'b':# and int(key[2]) < 5:
                     for key1 in lineDict[key].keys():
-                        if key1 == 'OBP' or key1 == 'BA':
-                            line += str(lineDict[key][key1])+','
-                elif key[-1] == 'p':
+                        #if key1 == 'SLG':# or key1 == 'OBP':
+                        line += str(lineDict[key][key1])+','
+                elif key == 'winner' or key[-1] == 'p':
                     line += str(lineDict[key])+','
             line = line[:-1]
             output.write(line +'\n')
@@ -57,7 +58,4 @@ def main():
         index += 1
     output.close()
 
-
-
-if __name__ == '__main__':
-    main()
+main()
